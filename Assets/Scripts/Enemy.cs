@@ -18,15 +18,26 @@ public class Enemy : MonoBehaviour
     protected float moveSpeed = 1f;
 
     protected Vector2 direction = Vector2.zero;
+ 
+    Rigidbody2D rigid;
 
     GameObject player;
 
     void Start()
     {
+        rigid = GetComponent<Rigidbody2D>(); // 리지드바디 가져오기
+
         player = GameObject.Find("Player");
         name = enemyName;
     }
 
+    void Update()
+    {
+        if(hp <= 0)
+        {
+            HpZero();
+        }
+    }
 
     void FixedUpdate()
     {
@@ -35,9 +46,14 @@ public class Enemy : MonoBehaviour
 
     protected void ChasePlayer()
     {
-        direction = (player.transform.position - transform.position) / (player.transform.position - transform.position).magnitude;
+        direction = (player.transform.position - transform.position) / (player.transform.position - transform.position).magnitude; // 방향벡터 구하기
 
-        transform.Translate(direction * moveSpeed * Time.deltaTime);
+        rigid.MovePosition(rigid.position + (direction * moveSpeed * Time.deltaTime));
     }
-    
+
+    // 체력이 0일 때
+    void HpZero() 
+    {
+        Destroy(gameObject);
+    }
 }
