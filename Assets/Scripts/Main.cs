@@ -1,11 +1,11 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
 
 public class Main : MonoBehaviour
 {
-    [Header("¿þÀÌºê")]
+    [Header("ì›¨ì´ë¸Œ")]
     [SerializeField]
     Wave[] waves;
 
@@ -27,21 +27,21 @@ public class Main : MonoBehaviour
 
     void Update()
     {
-        if(endOfWaveTime >= Time.time)
+        if (endOfWaveTime >= Time.time)
         {
-            if (nextSpawntime <= Time.time) // »ý¼º ÁÖ±â¿¡ µû¶ó Àû ½ºÆù
+            if (nextSpawntime <= Time.time) // ìƒì„± ì£¼ê¸°ì— ë”°ë¼ ì  ìŠ¤í°
             {
                 nextSpawntime += currentWave.spawnDelay;
                 SpawnEnemy(currentWave.enemy);
             }
         }
-        else if(currentWaveNum < waves.Length)
+        else if (currentWaveNum < waves.Length)
         {
             NextWave();
         }
     }
 
-    // ´ÙÀ½ ¿þÀÌºê·Î º¯°æ
+    // ë‹¤ìŒ ì›¨ì´ë¸Œë¡œ ë³€ê²½
     void NextWave()
     {
         currentWaveNum++;
@@ -52,28 +52,28 @@ public class Main : MonoBehaviour
             endOfWaveTime += currentWave.spawnDelay * currentWave.enemyCount;
         }
     }
-    
+
     public void SpawnEnemy(GameObject enemy)
     {
         Instantiate(enemy, player.transform.position + GetRandomVector(), Quaternion.identity);
     }
-    
-    // ·£´ý º¤ÅÍ¸¦ »ý¼º ÈÄ ¸®ÅÏ
+
+    // ëžœë¤ ë²¡í„°ë¥¼ ìƒì„± í›„ ë¦¬í„´
     private Vector3 GetRandomVector()
     {
         float radian = UnityEngine.Random.Range(0, 360) * Mathf.Deg2Rad;
         Vector3 spawnpoint;
 
         spawnpoint = new Vector3(15 * Mathf.Cos(radian), 15 * Mathf.Sin(radian), 0);
-        
+
         return spawnpoint;
     }
 
     [Serializable]
     public class Wave
     {
-        public int enemyCount; // ¼ÒÈ¯ÇÏ´Â Àû ¼ö
-        public float spawnDelay; // ¼ÒÈ¯ ÁÖ±â
+        public int enemyCount; // ì†Œí™˜í•˜ëŠ” ì  ìˆ˜
+        public float spawnDelay; // ì†Œí™˜ ì£¼ê¸°
         public GameObject enemy;
     }
 }

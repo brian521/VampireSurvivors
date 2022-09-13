@@ -8,7 +8,7 @@ public class Weapon : MonoBehaviour
     [SerializeField]
     public int damage = 2;
 
-    [Header("공격주기")]
+    [Header("공격 주기")]
     [SerializeField]
     public float atkDelay = 2f;
 }
