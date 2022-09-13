@@ -1485,6 +1485,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 521144bf4d26f2347979d13f1e85b509, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weapon: {fileID: 8471426305896374507, guid: ecf96ffabaa422e4baad3a76811bdad5, type: 3}
   moveSpeed: 5
 --- !u!60 &811085217
 PolygonCollider2D:

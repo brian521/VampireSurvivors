@@ -240,6 +240,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyName: Skeleton
-  hp: 5
+  hp: 4
   damage: 1
   moveSpeed: 2

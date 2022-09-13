@@ -22,6 +22,7 @@ public class Enemy : MonoBehaviour
     Rigidbody2D rigid;
 
     GameObject player;
+    Weapon weapon;
 
     void Start()
     {
@@ -55,5 +56,16 @@ public class Enemy : MonoBehaviour
     void HpZero() 
     {
         Destroy(gameObject);
+    }
+
+    // 무기에 닿으면 데미지 입기
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.collider.CompareTag("Weapon"))
+        {
+            weapon = col.collider.gameObject.GetComponent<Weapon>();
+            
+            hp -= weapon.damage;
+        }
     }
 }
