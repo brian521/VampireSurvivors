@@ -12,10 +12,17 @@ public class Enemy : MonoBehaviour
     protected int hp = 5;
     [Header("공격력")]
     [SerializeField]
-    protected int damage = 1;
+    public int damage = 1;
     [Header("이동속도")]
     [SerializeField]
     protected float moveSpeed = 1f;
+    [Header("경험치")]
+    [SerializeField]
+    protected GameObject gem;
+    [Header("상자")]
+    [SerializeField]
+    protected GameObject chest;
+
 
     protected Vector2 direction = Vector2.zero;
  
@@ -55,8 +62,19 @@ public class Enemy : MonoBehaviour
     // 체력이 0일 때
     void HpZero() 
     {
+        int drop = Random.Range(0, 10);
+        if (drop == 0)
+        {
+            Instantiate(chest, transform.position, Quaternion.identity);
+        }
+        else
+        {
+            Instantiate(gem, transform.position, Quaternion.identity);
+        }
         Destroy(gameObject);
     }
+
+
 
     // 무기에 닿으면 데미지 입기
     private void OnCollisionEnter2D(Collision2D col)

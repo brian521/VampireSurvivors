@@ -61,10 +61,10 @@ public class Main : MonoBehaviour
     // 랜덤 벡터를 생성 후 리턴
     private Vector3 GetRandomVector()
     {
-        float radian = UnityEngine.Random.Range(0, 360) * Mathf.Deg2Rad;
+        Vector2 radian = UnityEngine.Random.insideUnitCircle.normalized * 15;
         Vector3 spawnpoint;
 
-        spawnpoint = new Vector3(15 * Mathf.Cos(radian), 15 * Mathf.Sin(radian), 0);
+        spawnpoint = new Vector3(radian.x, radian.y, 0);
 
         return spawnpoint;
     }

@@ -14,8 +14,18 @@ public class PlayerController : MonoBehaviour
     [SerializeField] // Inspector에서 편집하기 위해서 사용. public을 사용해도 됨
     [Range(1f, 10f)]
     float moveSpeed = 5f;
-    
+
     float nextAtkTime = 0;
+
+    [SerializeField]
+    public int PlayerHp = 20;
+
+    [SerializeField]
+    int currentLevel = 0;
+    public int currentXp = 0;
+    int[] requiredXp = {10, 25, 50, 90, 110, 195, 310, 460};
+
+    Enemy enemy;
 
     void Start()
     {
@@ -24,8 +34,14 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-       StartCoroutine(Attack(weapon));
+        StartCoroutine(Attack(weapon));
         FlipX();
+        CheckLvl();
+
+        if (PlayerHp <= 0)
+        {
+            Debug.Log("GameOver");
+        }
     }
 
     void FixedUpdate() // 주로 물리효과(리지드바디)가 적용된 오브젝트에 사용
@@ -78,6 +94,25 @@ public class PlayerController : MonoBehaviour
             summonedWeapon.GetComponent<SpriteRenderer>().material.color = new Color(1,1,1,0.5f);
             yield return new WaitForSeconds(0.1f);
             Destroy(summonedWeapon);
+        }
+    }
+
+    void CheckLvl()
+    {
+        if (currentXp >= requiredXp[currentLevel])
+        {
+            currentLevel += 1;
+        }
+    }
+
+    // 적에 닿으면 데미지 입기
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.collider.CompareTag("Enemy"))
+        {
+            enemy = col.collider.gameObject.GetComponent<Enemy>();
+            Debug.Log("Hit by" + enemy.name);
+            PlayerHp -= enemy.damage;
         }
     }
 }

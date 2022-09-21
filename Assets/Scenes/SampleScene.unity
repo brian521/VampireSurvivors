@@ -1401,7 +1401,7 @@ GameObject:
   - component: {fileID: 811085218}
   m_Layer: 3
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1471,7 +1471,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &811085216
 MonoBehaviour:
@@ -1487,6 +1487,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weapon: {fileID: 8471426305896374507, guid: ecf96ffabaa422e4baad3a76811bdad5, type: 3}
   moveSpeed: 5
+  PlayerHp: 20
+  currentLevel: 0
+  currentXp: 0
 --- !u!60 &811085217
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -1786,7 +1789,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1084993802
 GameObject:
@@ -3333,5 +3336,5 @@ Transform:
   - {fileID: 146465584}
   - {fileID: 1872679313}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
