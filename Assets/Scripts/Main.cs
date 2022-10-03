@@ -17,6 +17,9 @@ public class Main : MonoBehaviour
     float nextSpawntime = 0;
     float endOfWaveTime = 0;
 
+    bool IsPause = false;
+    public GameObject PauseImage;
+
     void Start()
     {
         Enemys = Resources.LoadAll<GameObject>("Enemys/");
@@ -75,5 +78,21 @@ public class Main : MonoBehaviour
         public int enemyCount; // 소환하는 적 수
         public float spawnDelay; // 소환 주기
         public GameObject enemy;
+    }
+
+    public void Pause()
+    {
+        if (IsPause == false)
+        {
+            Time.timeScale = 0;
+            PauseImage.SetActive(true);
+            IsPause = true;
+        }
+        else
+        {
+            Time.timeScale = 1;
+            PauseImage.SetActive(false);
+            IsPause = false;
+        }
     }
 }
