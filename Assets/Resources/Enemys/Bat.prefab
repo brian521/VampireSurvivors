@@ -171,6 +171,6 @@ MonoBehaviour:
   enemyName: Bat
   hp: 2
   damage: 1
-  moveSpeed: 3
+  moveSpeed: 2
   gem: {fileID: 3995560573422643476, guid: f837f5f1d96853a4a9e490cabaa1452a, type: 3}
   chest: {fileID: 3702351872051142618, guid: ce417f7a1b4282948ace77da1a8056dd, type: 3}

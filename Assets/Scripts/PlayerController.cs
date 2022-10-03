@@ -15,26 +15,25 @@ public class PlayerController : MonoBehaviour
     [Range(1f, 10f)]
     float moveSpeed = 5f;
 
-    float nextAtkTime = 0;
 
-    [SerializeField]
     public int PlayerHp = 20;
+    public int MaxHp;
 
-    [SerializeField]
-    int currentLevel = 0;
+    public int currentLevel = 0;
     public int currentXp = 0;
-    int[] requiredXp = {10, 25, 50, 90, 110, 195, 310, 460};
+    public int[] requiredXp = {10, 25, 50, 90, 110, 195, 310, 460};
 
     Enemy enemy;
 
     void Start()
     {
         rigid = GetComponent<Rigidbody2D>(); // 리지드바디 가져오기
+        MaxHp = PlayerHp;
+        MakeWhip();
     }
 
     void Update()
     {
-        StartCoroutine(Attack(weapon));
         FlipX();
         CheckLvl();
 
@@ -51,10 +50,10 @@ public class PlayerController : MonoBehaviour
 
     void Move()
     {
-        moveX = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime;
-        moveY = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime;
+        moveX = Input.GetAxisRaw("Horizontal");
+        moveY = Input.GetAxisRaw("Vertical");
 
-        rigid.MovePosition(new Vector2(transform.position.x + moveX, transform.position.y + moveY));
+        rigid.velocity = new Vector2(moveX, moveY).normalized * moveSpeed;
     }
 
     void FlipX()
@@ -69,38 +68,45 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // 무기 생성 함수
-    IEnumerator Attack(GameObject weaponObject)
+    void MakeWhip()
     {
-        Weapon wp = weaponObject.GetComponent<Weapon>();
-        GameObject summonedWeapon;
+        Weapon wp = weapon.GetComponent<Weapon>();
+        GameObject WeaponObject;
+        WeaponObject = Instantiate(weapon, new Vector2(rigid.position.x + 2.04f, rigid.position.y + 0.6f), Quaternion.identity);
+        WeaponObject.transform.localScale = new Vector3(3f, 3f, 1f);
 
-        if (nextAtkTime <= Time.time)
+        StartCoroutine(Attack(WeaponObject, wp));
+    }
+
+    // 무기 생성 함수
+    IEnumerator Attack(GameObject summonedWeapon, Weapon Wp)
+    {
+        if (transform.localScale.x < 0)
         {
-            nextAtkTime += wp.atkDelay;
-
-            if (transform.localScale.x < 0)
-            {
-                summonedWeapon = Instantiate(weaponObject, new Vector2(rigid.position.x - 2.04f, rigid.position.y + 0.6f), Quaternion.identity);
-                summonedWeapon.transform.localScale = new Vector3(-3f, 3f, 1f);
-            }
-            else
-            {
-                summonedWeapon = Instantiate(weaponObject, new Vector2(rigid.position.x + 2.04f, rigid.position.y + 0.6f), Quaternion.identity);
-                summonedWeapon.transform.localScale = new Vector3(3f, 3f, 1f);
-            }
-
-            yield return new WaitForSeconds(0.1f);
-            summonedWeapon.GetComponent<SpriteRenderer>().material.color = new Color(1,1,1,0.5f);
-            yield return new WaitForSeconds(0.1f);
-            Destroy(summonedWeapon);
+            summonedWeapon.transform.position = new Vector2(rigid.position.x - 2.04f, rigid.position.y + 0.6f);
+            summonedWeapon.transform.localScale = new Vector3(-3f, 3f, 1f);
         }
+        else
+        {
+            summonedWeapon.transform.position = new Vector2(rigid.position.x + 2.04f, rigid.position.y + 0.6f);
+            summonedWeapon.transform.localScale = new Vector3(3f, 3f, 1f);
+        }
+
+        summonedWeapon.GetComponent<SpriteRenderer>().material.color = new Color(1, 1, 1, 1f);
+        summonedWeapon.SetActive(true);
+        yield return new WaitForSeconds(0.1f);
+        summonedWeapon.GetComponent<SpriteRenderer>().material.color = new Color(1,1,1,0.5f);
+        yield return new WaitForSeconds(0.1f);
+        summonedWeapon.SetActive(false);
+        yield return new WaitForSeconds(Wp.atkDelay);
+        StartCoroutine(Attack(summonedWeapon, Wp));
     }
 
     void CheckLvl()
     {
         if (currentXp >= requiredXp[currentLevel])
         {
+            currentXp -= requiredXp[currentLevel];
             currentLevel += 1;
         }
     }
