@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System;
 
 public class Main : MonoBehaviour
@@ -94,5 +95,17 @@ public class Main : MonoBehaviour
             PauseImage.SetActive(false);
             IsPause = false;
         }
+    }
+
+    public void Exit()
+    {
+        Time.timeScale = 1;
+        SceneManager.LoadScene("Main");
+    }
+
+    public void Restart()
+    {
+        Time.timeScale = 1;
+        SceneManager.LoadScene("SampleScene");
     }
 }

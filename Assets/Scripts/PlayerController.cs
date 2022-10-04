@@ -21,7 +21,9 @@ public class PlayerController : MonoBehaviour
 
     public int currentLevel = 0;
     public int currentXp = 0;
-    public int[] requiredXp = {10, 25, 50, 90, 110, 195, 310, 460};
+    public int[] requiredXp = {10, 25, 50, 90, 110, 195, 310, 460, 600};
+
+    public GameObject GameOverImage;
 
     Enemy enemy;
 
@@ -37,9 +39,9 @@ public class PlayerController : MonoBehaviour
         FlipX();
         CheckLvl();
 
-        if (PlayerHp <= 0)
+        if (PlayerHp <= 0 && GameOverImage.activeSelf == false)
         {
-            Debug.Log("GameOver");
+            GameOver();
         }
     }
 
@@ -117,8 +119,14 @@ public class PlayerController : MonoBehaviour
         if (col.collider.CompareTag("Enemy"))
         {
             enemy = col.collider.gameObject.GetComponent<Enemy>();
-            Debug.Log("Hit by" + enemy.name);
+            Debug.Log("Hit by " + enemy.name);
             PlayerHp -= enemy.damage;
         }
+    }
+
+    void GameOver()
+    {
+        GameOverImage.SetActive(true);
+        Time.timeScale = 0;
     }
 }
