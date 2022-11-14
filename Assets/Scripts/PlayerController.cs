@@ -6,9 +6,15 @@ public class PlayerController : MonoBehaviour
 {
     float moveX, moveY;
 
+    Quaternion ang = Quaternion.Euler(0, 0, 0);
+    Vector2 vec = new Vector2(0, 0);
+    float deg = 0f;
+
+    Vector2 movevec;
+
     Rigidbody2D rigid;
 
-    public GameObject weapon;
+    public GameObject[] weapon;
 
     [Header("이동속도 조절")]
     [SerializeField] // Inspector에서 편집하기 위해서 사용. public을 사용해도 됨
@@ -32,12 +38,19 @@ public class PlayerController : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>(); // 리지드바디 가져오기
         MaxHp = PlayerHp;
         MakeWhip();
+        MakeKnife();
     }
 
     void Update()
     {
         FlipX();
         CheckLvl();
+
+        if (moveX != 0 || moveY != 0)
+        {
+            deg = ((180 / Mathf.PI) * Mathf.Atan2(moveX, -moveY)) - 90;
+            ang = Quaternion.Euler(0, 0, deg);
+        }
 
         if (PlayerHp <= 0 && GameOverImage.activeSelf == false)
         {
@@ -54,8 +67,8 @@ public class PlayerController : MonoBehaviour
     {
         moveX = Input.GetAxisRaw("Horizontal");
         moveY = Input.GetAxisRaw("Vertical");
-
-        rigid.velocity = new Vector2(moveX, moveY).normalized * moveSpeed;
+        movevec = new Vector2(moveX, moveY);
+        rigid.velocity = movevec.normalized * moveSpeed;
     }
 
     void FlipX()
@@ -72,16 +85,23 @@ public class PlayerController : MonoBehaviour
 
     void MakeWhip()
     {
-        Weapon wp = weapon.GetComponent<Weapon>();
+        Weapon wp = weapon[0].GetComponent<Weapon>();
         GameObject WeaponObject;
-        WeaponObject = Instantiate(weapon, new Vector2(rigid.position.x + 2.04f, rigid.position.y + 0.6f), Quaternion.identity);
+        WeaponObject = Instantiate(weapon[0], new Vector2(rigid.position.x + 2.04f, rigid.position.y + 0.6f), Quaternion.identity);
         WeaponObject.transform.localScale = new Vector3(3f, 3f, 1f);
 
-        StartCoroutine(Attack(WeaponObject, wp));
+        StartCoroutine(AttackWhip(WeaponObject, wp));
     }
 
-    // 무기 생성 함수
-    IEnumerator Attack(GameObject summonedWeapon, Weapon Wp)
+    void MakeKnife()
+    {
+        Weapon wp = weapon[1].GetComponent<Weapon>();
+
+        StartCoroutine(AttackKnife(wp));
+    }
+
+    // 무기 공격 함수
+    IEnumerator AttackWhip(GameObject summonedWeapon, Weapon Wp)
     {
         if (transform.localScale.x < 0)
         {
@@ -101,8 +121,18 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         summonedWeapon.SetActive(false);
         yield return new WaitForSeconds(Wp.atkDelay);
-        StartCoroutine(Attack(summonedWeapon, Wp));
+        StartCoroutine(AttackWhip(summonedWeapon, Wp));
     }
+
+    IEnumerator AttackKnife(Weapon Wp)
+    {
+        GameObject summonedWeapon;
+        summonedWeapon = Instantiate(weapon[1], new Vector2(rigid.position.x, rigid.position.y), ang);
+
+        yield return new WaitForSeconds(Wp.atkDelay);
+        StartCoroutine(AttackKnife(Wp));
+    }
+
 
     void CheckLvl()
     {
