@@ -13,8 +13,13 @@ public class PlayerController : MonoBehaviour
     Vector2 movevec;
 
     Rigidbody2D rigid;
+    Animator anim;
 
     public GameObject[] weapon;
+    public Sprite[] passive;
+
+    public List<Sprite> gainedPassive = new List<Sprite>();
+    public List<Sprite> gainedWeapon = new List<Sprite>();
 
     [Header("이동속도 조절")]
     [SerializeField] // Inspector에서 편집하기 위해서 사용. public을 사용해도 됨
@@ -24,6 +29,8 @@ public class PlayerController : MonoBehaviour
 
     public int PlayerHp = 20;
     public int MaxHp;
+
+    bool damaged = false;
 
     public int currentLevel = 0;
     public int currentXp = 0;
@@ -36,14 +43,15 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rigid = GetComponent<Rigidbody2D>(); // 리지드바디 가져오기
+        anim = GetComponent<Animator>();
         MaxHp = PlayerHp;
         MakeWhip();
-        MakeKnife();
     }
 
     void Update()
     {
         FlipX();
+        Walk();
         CheckLvl();
 
         if (moveX != 0 || moveY != 0)
@@ -75,11 +83,23 @@ public class PlayerController : MonoBehaviour
     {
         if (moveX < 0)
         {
-            transform.localScale = new Vector3(-0.75f, 0.75f, 1f);
+            transform.localScale = new Vector3(-1f, 1f, 1f);
         }
         else if (moveX > 0)
         {
-            transform.localScale = new Vector3(0.75f, 0.75f, 1f);
+            transform.localScale = new Vector3(1f, 1f, 1f);
+        }
+    }
+
+    void Walk()
+    {
+        if(rigid.velocity.normalized.x == 0 && rigid.velocity.normalized.y == 0)
+        {
+            anim.SetBool("isWalk", false);
+        }
+        else
+        {
+            anim.SetBool("isWalk", true);
         }
     }
 
@@ -90,12 +110,16 @@ public class PlayerController : MonoBehaviour
         WeaponObject = Instantiate(weapon[0], new Vector2(rigid.position.x + 2.04f, rigid.position.y + 0.6f), Quaternion.identity);
         WeaponObject.transform.localScale = new Vector3(3f, 3f, 1f);
 
+        gainedWeapon.Add(weapon[0].GetComponent<SpriteRenderer>().sprite);
+
         StartCoroutine(AttackWhip(WeaponObject, wp));
     }
 
     void MakeKnife()
     {
         Weapon wp = weapon[1].GetComponent<Weapon>();
+
+        gainedWeapon.Add(weapon[1].GetComponent<SpriteRenderer>().sprite);
 
         StartCoroutine(AttackKnife(wp));
     }
@@ -140,18 +164,47 @@ public class PlayerController : MonoBehaviour
         {
             currentXp -= requiredXp[currentLevel];
             currentLevel += 1;
+
+            switch (currentLevel){ 
+                case 2:
+                    MakeKnife();
+                    break;
+                default:
+                    gainHp();
+                    break;
+            }
         }
     }
 
-    // 적에 닿으면 데미지 입기
-    private void OnCollisionEnter2D(Collision2D col)
+    void gainHp()
     {
-        if (col.collider.CompareTag("Enemy"))
+        if(!gainedPassive.Contains(passive[0]))
+        {
+            gainedPassive.Add(passive[0]);
+        }
+        MaxHp += 5;
+        PlayerHp += 5;
+    }
+
+
+    // 적에 닿으면 데미지 입기
+    private void OnCollisionStay2D(Collision2D col)
+    {
+        if (col.collider.CompareTag("Enemy") && damaged == false)
         {
             enemy = col.collider.gameObject.GetComponent<Enemy>();
             Debug.Log("Hit by " + enemy.name);
+            damaged = true;
             PlayerHp -= enemy.damage;
+
+            StartCoroutine(CheckDamaged());
         }
+    }
+
+    IEnumerator CheckDamaged()
+    {
+        yield return new WaitForSeconds(1f);
+        damaged = false;
     }
 
     void GameOver()

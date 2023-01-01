@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
+using TMPro;
 
 public class Main : MonoBehaviour
 {
@@ -17,9 +18,14 @@ public class Main : MonoBehaviour
     int currentWaveNum = 0;
     float nextSpawntime = 0;
     float endOfWaveTime = 0;
+    float playTime = 0;
 
     bool IsPause = false;
     public GameObject PauseImage;
+
+    public TextMeshProUGUI timeText;
+    int min = 0;
+    int sec = 0;
 
     void Start()
     {
@@ -31,9 +37,10 @@ public class Main : MonoBehaviour
 
     void Update()
     {
-        if (endOfWaveTime >= Time.time)
+        playTime += Time.deltaTime;
+        if (endOfWaveTime >= playTime)
         {
-            if (nextSpawntime <= Time.time) // 생성 주기에 따라 적 스폰
+            if (nextSpawntime <= playTime) // 생성 주기에 따라 적 스폰
             {
                 nextSpawntime += currentWave.spawnDelay;
                 SpawnEnemy(currentWave.enemy);
@@ -43,6 +50,20 @@ public class Main : MonoBehaviour
         {
             NextWave();
         }
+        else
+        {
+            Time.timeScale = 0;
+            Debug.Log("VICTORY!");
+        }
+
+        sec = Mathf.FloorToInt(playTime);
+        if(sec >= 60)
+        {
+            sec = 0;
+            min += 1;
+        }
+
+        timeText.text = string.Format("{0:D2}:{1:D2}", min, sec);
     }
 
     // 다음 웨이브로 변경
@@ -96,6 +117,7 @@ public class Main : MonoBehaviour
             IsPause = false;
         }
     }
+
 
     public void Exit()
     {
